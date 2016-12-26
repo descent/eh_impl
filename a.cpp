@@ -28,9 +28,9 @@ int main(int argc, char *argv[])
     cout << "hello" << endl; 
     func1();
   }
-  catch (int)
+  catch (int eh)
   {
-    cout << "catch int" << endl; 
+    cout << "catch int: " << eh << endl; 
   }
   return 0;
 }
