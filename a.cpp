@@ -95,8 +95,23 @@ struct SjLj_Function_Context
 
 //#define CXX_EH
 
-void func1()
+class Obj
 {
+  public:
+    Obj()
+    {
+      cout << "obj ctor" << endl;
+    }
+    ~Obj()
+    {
+      cout << "obj dtor" << endl;
+    }
+
+};
+
+void func2()
+{
+  cout << "func2 begin" << endl;
 #ifdef CXX_EH
   throw 100;
 #else
@@ -104,6 +119,16 @@ void func1()
   *(int*)throw_obj = 100;
   __cxa_throw(throw_obj, (std::type_info*)&typeid(int), NULL);
 #endif
+  cout << "func2 end" << endl;
+}
+
+void func1()
+{
+  cout << "func1 begin" << endl;
+  Obj obj;
+
+  func2();
+  cout << "func1 end" << endl;
 }
 
 int main(int argc, char *argv[])
