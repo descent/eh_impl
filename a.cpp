@@ -100,11 +100,13 @@ class Obj
   public:
     Obj()
     {
-      cout << "obj ctor" << endl;
+      //cout << "obj ctor" << endl;
+      printf("obj ctor\n");
     }
     ~Obj()
     {
-      cout << "obj dtor" << endl;
+      //cout << "obj dtor" << endl;
+      printf("obj dtor\n");
     }
 
 };
