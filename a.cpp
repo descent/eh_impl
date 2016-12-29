@@ -8,6 +8,11 @@ using namespace std;
 
 #include <unwind.h>
 
+// ref: https://gcc.gnu.org/onlinedocs/cpp/Common-Predefined-Macros.html
+#define GCC_VERSION (__GNUC__ * 10000 \
+                     + __GNUC_MINOR__ * 100 \
+                     + __GNUC_PATCHLEVEL__)
+
 extern "C" 
 {
   // libsupc++/eh_alloc.cc
@@ -43,9 +48,32 @@ struct Lsda
   unsigned char call_site_length;
   unsigned char call_site_table[2];
   signed char action_table[2];
+
+#if GCC_VERSION > 50200
+  signed char field[2];
+#endif
+#if GCC_VERSION < 30600
   const std::type_info *catch_type[1];
+#endif
 }__attribute__((packed));
 
+
+#if 0
+// unwind-pe.h
+  union unaligned
+    {
+      void *ptr;
+      unsigned u2 __attribute__ ((mode (HI)));
+      unsigned u4 __attribute__ ((mode (SI)));
+      unsigned u8 __attribute__ ((mode (DI)));
+      signed s2 __attribute__ ((mode (HI)));
+      signed s4 __attribute__ ((mode (SI)));
+      signed s8 __attribute__ ((mode (DI)));
+    } __attribute__((__packed__));
+#endif
+
+#if GCC_VERSION < 30600
+// gcc 3.4.4
 Lsda my_lsda=
 {
   0xff,
@@ -57,6 +85,24 @@ Lsda my_lsda=
   {1,0},
   &typeid(int),
 };
+#endif
+
+/* Test for GCC > 5.2.0 */
+#if GCC_VERSION > 50200
+// gcc 5.4.0
+Lsda my_lsda=
+{
+  0xff,
+  0x03,
+  0x0d,
+  0x01,
+  4,
+  {0, 1},
+  {1, 0},
+  {1, 0},
+
+};
+#endif
 
 
 // unwind-sjlj.c
